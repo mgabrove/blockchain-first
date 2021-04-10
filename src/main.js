@@ -33,7 +33,7 @@ new Vue({
     //uhvati korisnika sa web3 i pohrani u varijablu currentAccount
     async updateAccount() {
       const accounts = await web3.eth.getAccounts();
-      const account = accounts[1];
+      const account = accounts[2];
       this.currentAccount = account;
       console.log("ACCOUNT: "+account)
     },
@@ -55,6 +55,7 @@ new Vue({
       if (counter !== null) {
         const hashes = [];
         const captions = [];
+        const titles = [];
         for (let i = counter; i >= 1; i -= 1) {
           hashes.push(contract.methods.getHash(i).call({
             from: this.currentAccount,
@@ -65,6 +66,11 @@ new Vue({
           captions.push(fetch(`https://gateway.ipfs.io/ipfs/${postHashes[i].text}`)
             .then(res => res.text()));
         }
+        for (let i = 0; i < postHashes.length; i += 1) {
+          titles.push(fetch(`https://gateway.ipfs.io/ipfs/${postHashes[i].title}`)
+            .then(res => res.text()));
+        }
+        const postTitles = await Promise.all(titles);
         const postCaptions = await Promise.all(captions);
         for (let i = 0; i < postHashes.length; i += 1) {
           posts.push({
@@ -72,6 +78,7 @@ new Vue({
             key: `no.${i+1}`,
             caption: postCaptions[i],
             src: `https://gateway.ipfs.io/ipfs/${postHashes[i].img}`,
+            title: postTitles[i],
           });
         }
         console.log(posts)

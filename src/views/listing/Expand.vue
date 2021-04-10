@@ -3,7 +3,7 @@
       <div class="modal1 col-4" role="dialog" aria-labelledby="modalTitle" aria-describedby="modalDescription">
         <header class="modal-header" id="modalTitle">
           <slot name="header">
-            Podaci o studentu
+            {{this.contr.title}}
           </slot>
         </header>
         <section class="modal-body" id="modalDescription">

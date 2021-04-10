@@ -1,5 +1,5 @@
-var InstagramPosting = artifacts.require("InstagramPosting");
+var ISPcontract = artifacts.require("ISPcontract");
 
 module.exports = function(deployer) {
-  deployer.deploy(InstagramPosting);
+  deployer.deploy(ISPcontract);
 };

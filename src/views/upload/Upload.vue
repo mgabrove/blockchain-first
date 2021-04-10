@@ -18,8 +18,15 @@
               />
             </div>
             <b-form-textarea
+              v-model="title"
+              placeholder="Add issue title"
+              :rows="1"
+              :max-rows="1"
+              class="margin-xs"
+            />
+            <b-form-textarea
               v-model="caption"
-              placeholder="Post description"
+              placeholder="Add issue description"
               :rows="3"
               :max-rows="6"
               class="margin-xs"
@@ -52,14 +59,14 @@
               {{ item.caption }}
             </p>--->
           </b-card>
-          <b-card
+          <!---<b-card
             border-variant="secondary"
             :img-src="probniLink"
           >
-            <!---<p class="home-card-text">
+            <p class="home-card-text">
               {{ item.caption }}
-            </p>--->
-          </b-card>
+            </p>
+          </b-card>--->
   </div>
 </template>
 
@@ -73,6 +80,7 @@ export default {
     return {
       buffer: '',
       caption: '',
+      title: '',
       imgPath: '',
       nekiBuffer: null,
       probniLinkSlika:  'https://gateway.ipfs.io/ipfs/QmYwGWrnhocGvK25p3aZqCwu671Pp8Rc1fugKJmGgEJ5C4',
@@ -104,14 +112,18 @@ export default {
      */
     onSubmit() {
       let imgHash;
+      let titleHashOut;
 
       ipfs.add(this.buffer).then((hashedImg) => {
         imgHash = hashedImg.path;
         this.imgPath = `https://gateway.ipfs.io/ipfs/${imgHash}`;
-        return this.convertToBuffer(this.caption);
-      }).then(bufferDesc => ipfs.add(bufferDesc).then(hashedText => hashedText.path)).then((textHash) => {
+        return (this.convertToBuffer(this.title));
+      }).then((bufferTitle) => ipfs.add(bufferTitle).then((hashedTitle) => (hashedTitle.path))).then((titleHash) => {
+        titleHashOut = titleHash;
+        return (this.convertToBuffer(this.caption));
+        }).then((bufferText) => ipfs.add(bufferText).then((hashedText) => (hashedText.path))).then((textHash) => {
         this.$root.contract.methods
-        .sendHash(imgHash, textHash)
+        .sendHash(imgHash, textHash, titleHashOut)
         .send({ from: this.$root.currentAccount, gas: 1000000 }, 
           (error, transactionHash) => {
             console.log(error)  
@@ -131,11 +143,10 @@ export default {
      * are filled before submission.
      */
     handleOk() {
-      if (!this.buffer || !this.caption) {
+      if (!this.buffer || !this.caption || !this.title) {
         alert('Please fill in the information.');
       } else {
         this.onSubmit();
-        console.log("SUCCESS")
       }
     },
   },
