@@ -1,6 +1,5 @@
 import Web3 from 'web3';
-//Web3 = require('web3')
-var web3 = new Web3('ws://localhost:8545')
+var web3 = new Web3('ws://localhost:8545');
 
 const address = "0x16e51C66D2ef65C93ce1A388eacB51c6bee8681d";
 const abi = [

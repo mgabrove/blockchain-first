@@ -5,7 +5,6 @@
       <div id="upload">
         <div>
           <h1>Upload your media here.</h1>
-
           <!-- Form for file choose, caption text and submission -->
           <form
             class="margin-sm"
@@ -53,6 +52,14 @@
               {{ item.caption }}
             </p>--->
           </b-card>
+          <b-card
+            border-variant="secondary"
+            :img-src="probniLink"
+          >
+            <!---<p class="home-card-text">
+              {{ item.caption }}
+            </p>--->
+          </b-card>
   </div>
 </template>
 
@@ -67,7 +74,9 @@ export default {
       buffer: '',
       caption: '',
       imgPath: '',
-
+      nekiBuffer: null,
+      probniLinkSlika:  'https://gateway.ipfs.io/ipfs/QmYwGWrnhocGvK25p3aZqCwu671Pp8Rc1fugKJmGgEJ5C4',
+      probniLinkVideo: 'https://gateway.ipfs.io/ipfs/QmPVQxAkFMKznfGhrcSXqdLwhwnMAqV2R2qdcGZf71PZ9g'
     };
   },
   methods: {
@@ -84,10 +93,7 @@ export default {
         };
       } else this.buffer = '';
     },
-    /**
-     * converts ArrayBuffer to
-     * Buffer for IPFS upload.
-     */
+    //prebaci ArrayBuffer u Buffer za uploadanje na IPFS
     async convertToBuffer(reader) {
       return Buffer.from(reader);
     },
@@ -113,9 +119,7 @@ export default {
             if (typeof transactionHash !== 'undefined') {
               this.$root.contract.once('NewPost',
                   () => {
-                    console.log("SAD GETTAMO")
                     this.$root.getPosts();
-                    alert('Operation Finished! Refetching...');
                 });
             } else this.$root.loading = false;
           }

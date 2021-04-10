@@ -8,13 +8,12 @@
         </header>
         <section class="modal-body" id="modalDescription">
           <slot name="body">
-            Tu nešto...
+            {{this.contr.caption}}
           </slot>
         </section>
         <footer class="modal-footer">
           <slot name="footer">
-            <button type="button" class="btn-close" @click="approve" aria-label="Close modal">Prihvati</button>
-            <button type="button" class="btn-close" @click="decline" aria-label="Close modal">Odbij</button>
+            <button type="button" class="btn-close" @click="close" aria-label="Close modal">Close</button>
           </slot>
         </footer>
       </div>
@@ -23,22 +22,16 @@
 
 <script>
 export default {
-  props: ['contractCard'],
+  props: ['contr'],
   name: 'modal',
     data(){
       return{
       }
     },
   methods: {
-    close(broj) {
-      this.$emit('close', broj)
+    close() {
+      this.$emit('close')
     },
-    approve() {
-      this.close(1)
-    },
-    decline() {
-      this.close(-1)
-    }
   },
 };
 </script>

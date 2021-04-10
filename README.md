@@ -1,4 +1,4 @@
-# frontend
+# Issue Submission Platform
 
 ## Project setup
 ```

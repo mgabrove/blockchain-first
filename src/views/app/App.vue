@@ -2,7 +2,7 @@
   <div id="app" style="min-height:100vh;">
     <Navbar style="position:fixed; top:0; z-index:1;"/>
     <router-view/>
-    <Footer v-if="this.$route.name === 'Login'" style="position:fixed; bottom:0; z-index:1;"/>
+    <Footer style="position:fixed; bottom:0; z-index:1;"/>
   </div>
 </template>
 

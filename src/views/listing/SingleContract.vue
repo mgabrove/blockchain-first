@@ -7,7 +7,7 @@
             <td style="width:30%;"><p>{{this.contr.src}}</p></td>
             <td style="width:10%;"><button @click="showModal">Proširi</button></td>
         </tr>
-        <Expand :contr="contr" v-if="isModalVisible === true" @close="closeModal"/>
+        <Expand :contr="this.contr" v-if="isModalVisible === true" @close="closeModal"/>
     </table>
 </template>
 
