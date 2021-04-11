@@ -10,8 +10,7 @@
                     <td class="dodaci" style="width:10%;"><p>Expand issue</p></td>
                 </tr>
             </table>
-            <SingleContract v-for="contr in this.$root.currentPosts" :key="contr.id" 
-            :contr="contr" style="background:gray;"/>
+            <SingleContract v-for="contr in this.$root.currentPosts" :key="contr.id" :contr="contr" style="background:gray;"/>
         </div>
     </div>
 </template>

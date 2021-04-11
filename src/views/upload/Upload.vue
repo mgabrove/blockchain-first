@@ -1,44 +1,18 @@
 <template>
   <div id="uploadOuter">
     <div style="display: flex; flex-direction: column;">
-      <!-- Upload Interface -->
       <div id="upload">
         <div>
           <h1>Upload your issue here.</h1>
-          <!-- Form for file choose, caption text and submission -->
-          <form
-            class="margin-sm"
-            @submit.stop.prevent="handleSubmit"
-          >
+          <form class="margin-sm" @submit.stop.prevent="handleSubmit">
             <div class="border-style">
-              <b-form-file
-                plain
-                @change="captureFile"
-                accept="image/*,video/*"
-              />
+              <b-form-file plain @change="captureFile" accept="image/*,video/*"/>
             </div>
-            <b-form-textarea
-              v-model="title"
-              placeholder="Add issue title"
-              :rows="1"
-              :max-rows="1"
-              class="margin-xs"
-            />
-            <b-form-textarea
-              v-model="caption"
-              placeholder="Add issue description"
-              :rows="3"
-              :max-rows="6"
-              class="margin-xs"
-            />
+            <b-form-textarea v-model="title" placeholder="Add issue title" :rows="1" :max-rows="1" class="margin-xs"/>
+            <b-form-textarea v-model="caption" placeholder="Add issue description" :rows="3" :max-rows="6" class="margin-xs"/>
             <div style="margin-top:15px;">
-              <b-button style="display:inline-block;margin-right:10px;margin-top:0px;"
-                class="margin-xs"
-                variant="secondary"
-                @click="handleOk"
-              >
-                Upload
-              </b-button>
+              <b-button style="display:inline-block;margin-right:10px;margin-top:0px;" 
+              class="margin-xs" variant="secondary" @click="handleOk">Upload</b-button>
               <div v-if="uploadFinished === 1" style="display:inline-block;font-size:20px;">
                 <p style="color:lightgreen;">Issue submission uploaded.</p>
               </div>
@@ -49,21 +23,11 @@
           </form>
         </div>
         <div style="margin-top:10px;margin-bottom:80px;">
-              <b-card class="offset-2 col-8" v-show="viewingVideo===0"
-                border-variant="secondary"
-              >
+              <b-card class="offset-2 col-8" v-show="viewingVideo===0" border-variant="secondary">
                 <img style="max-width:100%;height:auto;" v-bind:src="imgPreview"/> 
-                  <!---<p class="home-card-text">
-                    {{ item.caption }}
-                  </p>--->
               </b-card>
-              <b-card class="offset-2 col-8" v-show="viewingVideo===1"
-                border-variant="secondary"
-              >
+              <b-card class="offset-2 col-8" v-show="viewingVideo===1" border-variant="secondary">
                 <video style="max-width:100%;height:auto;" v-bind:src="imgPreview" controls/> 
-                  <!---<p class="home-card-text">
-                    {{ item.caption }}
-                  </p>--->
               </b-card>
             </div>
       </div>
@@ -76,7 +40,6 @@ import ipfs from './ipfs';
 
 export default {
   name: 'Upload',
-  // data variables
   data() {
     return {
       buffer: '',
@@ -88,9 +51,7 @@ export default {
     };
   },
   methods: {
-    /* used to catch chosen image &
-     * convert it to ArrayBuffer.
-     */
+    //provjera radi li se o video formatu ili slici
     checkVideo(file) {
       var video = document.createElement("video");
       video.setAttribute("src", file);
@@ -99,12 +60,12 @@ export default {
       });
       video.addEventListener("error", () => {
         this.viewingVideo = 0;
-    });
+      });
     },
+    //hvata medij i priprema za slanje
     captureFile(file) {
       const filePreview = file.target.files[0];
       this.imgPreview = URL.createObjectURL(filePreview);
-
       const reader = new FileReader();
       if (typeof file !== 'undefined') {
         reader.readAsArrayBuffer(file.target.files[0]);
@@ -114,20 +75,15 @@ export default {
       } else this.buffer = '';
       this.checkVideo(this.imgPreview)
     },
-    //prebaci ArrayBuffer u Buffer za uploadanje na IPFS
+    //prebacuje ArrayBuffer u Buffer za uploadanje na IPFS
     async convertToBuffer(reader) {
       return Buffer.from(reader);
     },
-    /**
-     * submits buffered image & text to IPFS
-     * and retrieves the hashes, then store
-     * it in the Contract via sendHash().
-     */
+    //tekst i medij šalju se na IPFS, preuzmimaju se hashevi i pohrane se u ugovor sa sendHash()
     onSubmit() {
       this.uploadFinished = 0;
       let imgHash;
       let titleHashOut;
-
       ipfs.add(this.buffer).then((hashedImg) => {
         imgHash = hashedImg.path;
         return (this.convertToBuffer(this.title));
@@ -152,10 +108,7 @@ export default {
         )
       })
     },
-    /**
-     * validates if image & captions
-     * are filled before submission.
-     */
+    //provjera popunjenosti svih formi
     handleOk() {
       if (!this.buffer || !this.caption || !this.title) {
         alert('Please fill in the information.');
@@ -164,8 +117,6 @@ export default {
       }
     },
   },
-  mounted(){
-  }
 };
 </script>
 

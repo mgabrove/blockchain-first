@@ -25,9 +25,11 @@ export default {
         }
     },
     methods: {
+        //pokaži modalni prozor
         showModal() {
             this.isModalVisible = true
         },
+        //sakrij modalni prozor
         closeModal() {
             this.isModalVisible = false
         },

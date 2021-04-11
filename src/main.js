@@ -33,20 +33,11 @@ new Vue({
     //uhvati korisnika sa web3 i pohrani u varijablu currentAccount
     async updateAccount() {
       const accounts = await web3.eth.getAccounts();
-      const account = accounts[4];
+      const account = accounts[0];
       this.currentAccount = account;
       console.log("ACCOUNT: "+account)
     },
-    /**
-     * using the Smart Contract instance:
-     * getCounter() - gets the length of total posts
-     * getHash() - gets the image & text hashes using an index
-     *
-     * index is from the iteration of the retrieved total
-     * post count. every loop gets the hashes and fetches
-     * text & image using the IPFS gateway URL.
-     */
-    //
+    //dohvate se svi submissioni, kroz njih se iterira te se hvataju URLovi sa infure za prikazivanje
     async getPosts() {
       const posts = [];
       const counter = await contract.methods.getCounter().call({
@@ -86,11 +77,11 @@ new Vue({
       }
     },
   },
+  //pri stvaranju, uhvati račun sa MetaMaska i dohvati submissione
   async created() {
     await this.updateAccount();
     console.log(web3.eth.getBalance(this.currentAccount));
     await this.getPosts();
   },
-
   render: h => h(App)
 }).$mount('#app')

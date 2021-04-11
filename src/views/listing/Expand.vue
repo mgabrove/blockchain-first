@@ -2,32 +2,18 @@
     <div class="modal-backdrop1" style="z-index:1;">
       <div class="modal1 col-4" role="dialog" aria-labelledby="modalTitle" aria-describedby="modalDescription">
         <header class="modal-header" id="modalTitle">
-          <slot name="header">
-            {{this.contr.title}}
-          </slot>
+          <slot name="header">{{this.contr.title}}</slot>
         </header>
         <section class="modal-body" id="modalDescription">
           <slot name="body">
             <div style="overflow-wrap: break-word;">{{this.contr.caption}}</div>
-            <a :href="this.contr.src" target="_blank">
-              <p><u>media</u></p>
-            </a>
+            <a :href="this.contr.src" target="_blank"><p><u>media</u></p></a>
             <div>
-              <b-card class="offset-2 col-8" v-if="displayImage===true"
-                border-variant="secondary"
-              >
-              <img style="max-width:100%;height:auto;" v-bind:src="this.contr.src"/> 
-                <!---<p class="home-card-text">
-                  {{ item.caption }}
-                </p>--->
+              <b-card class="offset-2 col-8" v-if="displayImage===true" border-variant="secondary">
+                <img style="max-width:100%;height:auto;" v-bind:src="this.contr.src"/> 
               </b-card>
-              <b-card class="offset-2 col-8" v-if="displayImage===false"
-                border-variant="secondary"
-              >
-              <video style="max-width:100%;height:auto;" v-bind:src="this.contr.src" controls/> 
-                <!---<p class="home-card-text">
-                  {{ item.caption }}
-                </p>--->
+              <b-card class="offset-2 col-8" v-if="displayImage===false" border-variant="secondary">
+                <video style="max-width:100%;height:auto;" v-bind:src="this.contr.src" controls/> 
               </b-card>
             </div>
           </slot>
@@ -51,13 +37,16 @@ export default {
       }
     },
   methods: {
+    //emitiraj parent .vue zatvaranje modalnog prozora
     close() {
       this.$emit('close')
     },
+    //postavi način prikazivanja na video
     changeVideoState(){
       this.displayImage = false;
     }
   },
+  //pri stvaranju, provjeri radi li se o mediju video ili slikovnog formata
   created(){
     var video = document.createElement("video");
     video.setAttribute("src", this.contr.src);

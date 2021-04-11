@@ -1,7 +1,9 @@
 import Web3 from 'web3';
 var web3 = new Web3('ws://localhost:8545');
 
+//adresa ugovora
 const address = "0x046cE2ca5eB2eed84C985ce0D05AB2A11Ab14400";
+//struktura ugovora
 const abi = [
   {
     "anonymous": false,

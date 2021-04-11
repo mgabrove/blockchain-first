@@ -10,10 +10,4 @@ export default {
 }
 </script>
 
-<style scoped>
-  .sticky { 
-    position: fixed;
-    bottom: 0;
-    width: 100%;
-  }
-</style>
+<style src='@/assets/styles/pagestyles.css'></style>
