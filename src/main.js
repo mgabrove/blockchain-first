@@ -33,7 +33,7 @@ new Vue({
     //uhvati korisnika sa web3 i pohrani u varijablu currentAccount
     async updateAccount() {
       const accounts = await web3.eth.getAccounts();
-      const account = accounts[2];
+      const account = accounts[4];
       this.currentAccount = account;
       console.log("ACCOUNT: "+account)
     },

@@ -4,7 +4,7 @@
       <!-- Upload Interface -->
       <div id="upload">
         <div>
-          <h1>Upload your media here.</h1>
+          <h1>Upload your issue here.</h1>
           <!-- Form for file choose, caption text and submission -->
           <form
             class="margin-sm"
@@ -31,42 +31,43 @@
               :max-rows="6"
               class="margin-xs"
             />
-            <b-button
-              class="margin-xs"
-              variant="secondary"
-              @click="handleOk"
-            >
-              Upload
-            </b-button>
+            <div style="margin-top:15px;">
+              <b-button style="display:inline-block;margin-right:10px;margin-top:0px;"
+                class="margin-xs"
+                variant="secondary"
+                @click="handleOk"
+              >
+                Upload
+              </b-button>
+              <div v-if="uploadFinished === 1" style="display:inline-block;font-size:20px;">
+                <p style="color:lightgreen;">Issue submission uploaded.</p>
+              </div>
+              <div v-if="uploadFinished === 0" style="display:inline-block;font-size:20px;">
+                <p style="color:red;">Issue submission uploading.</p>
+              </div>
+            </div>
           </form>
         </div>
-        <div
-          v-if="this.$root.$data.loading === true"
-          style="margin-top: 10%; margin-bottom: 5%"
-        >
-          <img
-            class="upload-load"
-            src="https://media.giphy.com/media/2A6xoqXc9qML9gzBUE/giphy.gif"
-          >
-        </div>
+        <div style="margin-top:10px;margin-bottom:80px;">
+              <b-card class="offset-2 col-8" v-show="viewingVideo===0"
+                border-variant="secondary"
+              >
+                <img style="max-width:100%;height:auto;" v-bind:src="imgPreview"/> 
+                  <!---<p class="home-card-text">
+                    {{ item.caption }}
+                  </p>--->
+              </b-card>
+              <b-card class="offset-2 col-8" v-show="viewingVideo===1"
+                border-variant="secondary"
+              >
+                <video style="max-width:100%;height:auto;" v-bind:src="imgPreview" controls/> 
+                  <!---<p class="home-card-text">
+                    {{ item.caption }}
+                  </p>--->
+              </b-card>
+            </div>
       </div>
    </div>
-          <b-card
-            border-variant="secondary"
-            :img-src="imgPath"
-          >
-            <!---<p class="home-card-text">
-              {{ item.caption }}
-            </p>--->
-          </b-card>
-          <!---<b-card
-            border-variant="secondary"
-            :img-src="probniLink"
-          >
-            <p class="home-card-text">
-              {{ item.caption }}
-            </p>
-          </b-card>--->
   </div>
 </template>
 
@@ -81,18 +82,29 @@ export default {
       buffer: '',
       caption: '',
       title: '',
-      imgPath: '',
-      nekiBuffer: null,
-      probniLinkSlika:  'https://gateway.ipfs.io/ipfs/QmYwGWrnhocGvK25p3aZqCwu671Pp8Rc1fugKJmGgEJ5C4',
-      probniLinkVideo: 'https://gateway.ipfs.io/ipfs/QmPVQxAkFMKznfGhrcSXqdLwhwnMAqV2R2qdcGZf71PZ9g'
+      imgPreview: '',
+      viewingVideo: 2,
+      uploadFinished: 2,
     };
   },
   methods: {
     /* used to catch chosen image &
      * convert it to ArrayBuffer.
      */
-    
+    checkVideo(file) {
+      var video = document.createElement("video");
+      video.setAttribute("src", file);
+      video.addEventListener("canplay", () => {
+        this.viewingVideo = 1;
+      });
+      video.addEventListener("error", () => {
+        this.viewingVideo = 0;
+    });
+    },
     captureFile(file) {
+      const filePreview = file.target.files[0];
+      this.imgPreview = URL.createObjectURL(filePreview);
+
       const reader = new FileReader();
       if (typeof file !== 'undefined') {
         reader.readAsArrayBuffer(file.target.files[0]);
@@ -100,6 +112,7 @@ export default {
           this.buffer = await this.convertToBuffer(reader.result);
         };
       } else this.buffer = '';
+      this.checkVideo(this.imgPreview)
     },
     //prebaci ArrayBuffer u Buffer za uploadanje na IPFS
     async convertToBuffer(reader) {
@@ -111,29 +124,30 @@ export default {
      * it in the Contract via sendHash().
      */
     onSubmit() {
+      this.uploadFinished = 0;
       let imgHash;
       let titleHashOut;
 
       ipfs.add(this.buffer).then((hashedImg) => {
         imgHash = hashedImg.path;
-        this.imgPath = `https://gateway.ipfs.io/ipfs/${imgHash}`;
         return (this.convertToBuffer(this.title));
       }).then((bufferTitle) => ipfs.add(bufferTitle).then((hashedTitle) => (hashedTitle.path))).then((titleHash) => {
-        titleHashOut = titleHash;
-        return (this.convertToBuffer(this.caption));
-        }).then((bufferText) => ipfs.add(bufferText).then((hashedText) => (hashedText.path))).then((textHash) => {
-        this.$root.contract.methods
-        .sendHash(imgHash, textHash, titleHashOut)
-        .send({ from: this.$root.currentAccount, gas: 1000000 }, 
-          (error, transactionHash) => {
-            console.log(error)  
-            console.log(transactionHash)
-            if (typeof transactionHash !== 'undefined') {
-              this.$root.contract.once('NewPost',
-                  () => {
-                    this.$root.getPosts();
-                });
-            } else this.$root.loading = false;
+          titleHashOut = titleHash;
+          return (this.convertToBuffer(this.caption));
+          }).then((bufferText) => ipfs.add(bufferText).then((hashedText) => (hashedText.path))).then((textHash) => {
+            this.$root.contract.methods
+            .sendHash(imgHash, textHash, titleHashOut)
+            .send({ from: this.$root.currentAccount, gas: 1000000 }, 
+              (error, transactionHash) => {
+                console.log(error)  
+                console.log(transactionHash)
+                this.uploadFinished = 1;
+                if (typeof transactionHash !== 'undefined') {
+                  this.$root.contract.once('NewPost',
+                      () => {
+                        this.$root.getPosts();
+                    });
+                }
           }
         )
       })
@@ -150,6 +164,8 @@ export default {
       }
     },
   },
+  mounted(){
+  }
 };
 </script>
 

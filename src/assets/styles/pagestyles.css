@@ -15,18 +15,9 @@ body, html {
     }
   
   /* Navbar.vue */
-  .logo {
-    height: 80px;
-  }
   .stupanj {
     position: absolute;
     left: 50px;
-    top: 20px;
-  }
-  .logout {
-    position: absolute;
-    right: 50px;
-    top: 1rem;
   }
   #nav {
     box-shadow: 0 -3px 10px 8px lightgray;
